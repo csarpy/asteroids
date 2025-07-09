@@ -1,32 +1,33 @@
 from circleshape import CircleShape
+from shot import Shot
 import pygame
-from constants import PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED
+from constants import PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED, PLAYER_SHOOT_SPEED
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
-        self.__rotation = 0
+        self.rotation = 0
 
     def triangle(self):
-        position = self.get_position()
-        radius = self.get_radius()
-        rotation = self.get_rotation()
-        forward = pygame.Vector2(0, 1).rotate(rotation)
-        right = pygame.Vector2(0, 1).rotate(rotation + 90) * radius / 1.5
-        a = position + forward * radius
-        b = position - forward * radius - right
-        c = position - forward * radius + right
+        forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
+        a = self.position + forward * self.radius
+        b = self.position - forward * self.radius - right
+        c = self.position - forward * self.radius + right
         return [a, b, c]
     
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), 2)
 
+    def shoot(self):
+        shot = Shot(self.position.x, self.position.y)
+        shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+
     def rotate(self, dt):
-        self.update_rotation((PLAYER_TURN_SPEED * dt))
+        self.rotation += (PLAYER_TURN_SPEED * dt)
 
     def move(self, dt):
-        forward = pygame.Vector2(0, 1).rotate(self.get_rotation())
-        self.update_position(forward * PLAYER_SPEED * dt)
+        self.position += (pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SPEED * dt)
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
@@ -47,9 +48,6 @@ class Player(CircleShape):
             # go back
             self.move(dt * -1)
 
-    # rotation is dynamic, so update it rather than set it
-    def update_rotation(self, value):
-        self.__rotation += value
-    
-    def get_rotation(self):
-        return self.__rotation
+        if keys[pygame.K_SPACE]:
+            # go back
+            self.shoot()

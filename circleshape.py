@@ -9,31 +9,15 @@ class CircleShape(pygame.sprite.Sprite):
         else:
             super().__init__()
 
-        self.__position = pygame.Vector2(x, y)
-        self.__velocity = pygame.Vector2(0, 0)
-        self.__radius = radius
+        self.position = pygame.Vector2(x, y)
+        self.velocity = pygame.Vector2(0, 0)
+        self.radius = radius
+
+    def check_collision(self, circle):
+        return self.position.distance_to(circle.position) <= self.radius + circle.radius
 
     def draw(self, screen):
         raise NotImplementedError ("Sub-classes must implement their own draw()")
 
     def update(self, dt):
         raise NotImplementedError ("Sub-classes must implement their own update()")
-
-    def get_position(self):
-        return self.__position
-    
-    def get_velocity(self):
-        return self.__velocity
-    
-    def get_radius(self):
-        return self.__radius
-    
-    # position is dynamic, so update it rather than set it
-    def update_position(self, val):
-        self.__position += val
-    
-    def set_velocity(self, val):
-        self.__velocity = val
-    
-    def set_radius(self, val):
-        self.__radius = val
