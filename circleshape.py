@@ -14,12 +14,10 @@ class CircleShape(pygame.sprite.Sprite):
         self.__radius = radius
 
     def draw(self, screen):
-        #sub-classes must override
-        pass
+        raise NotImplementedError ("Sub-classes must implement their own draw()")
 
     def update(self, dt):
-        # sub-classes must override
-        pass
+        raise NotImplementedError ("Sub-classes must implement their own update()")
 
     def get_position(self):
         return self.__position
@@ -29,3 +27,13 @@ class CircleShape(pygame.sprite.Sprite):
     
     def get_radius(self):
         return self.__radius
+    
+    # position is dynamic, so update it rather than set it
+    def update_position(self, val):
+        self.__position += val
+    
+    def set_velocity(self, val):
+        self.__velocity = val
+    
+    def set_radius(self, val):
+        self.__radius = val
